@@ -55,10 +55,21 @@ const Navbar = () => {
     { label: 'Kontak', href: '#contact' },
   ];
 
+  const menuItemsLoggedIn = [
+    { label: 'Dashboard', href: '/user/user-dashboard' },
+    { label: 'Kumpulan Tugas', href: '/user/tasks-list' },
+    { label: 'Submit Tugas', href: '/user/tasks-submit' },
+    { label: 'Penarikan Reward', href: '/user/withdrawal' },
+    { label: 'Profil', href: '/user/user-profile' },
+  ];
+
   const handleLogout = () => {
     localStorage.removeItem('authToken');
     navigate('/auth/login');
   };
+
+  // Pilih menu berdasarkan apakah user sudah login atau belum
+  const selectedMenuItems = isLoggedIn ? menuItemsLoggedIn : menuItems;
 
   return (
     <div
@@ -73,7 +84,7 @@ const Navbar = () => {
 
           <nav className="hidden lg:flex justify-center flex-grow">
             <ul className="flex space-x-8">
-              {menuItems.map((item, index) => (
+              {selectedMenuItems.map((item, index) => (
                 <li key={index}>
                   <Link
                     to={item.href}
@@ -124,7 +135,7 @@ const Navbar = () => {
         <div className="lg:hidden bg-white">
           <nav className="container mx-auto px-4 py-4">
             <ul className="space-y-4">
-              {menuItems.map((item, index) => (
+              {selectedMenuItems.map((item, index) => (
                 <li key={index}>
                   <Link
                     to={item.href}
