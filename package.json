@@ -12,6 +12,7 @@
 		"axios": "^1.7.7",
 		"chart.js": "^4.4.1",
 		"chartjs-adapter-moment": "^1.0.1",
+		"flowbite-react": "^0.10.2",
 		"jwt-decode": "^4.0.0",
 		"lucide-react": "^0.446.0",
 		"moment": "^2.29.4",

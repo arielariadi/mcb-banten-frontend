@@ -5,9 +5,12 @@ import './css/style.css';
 
 import './charts/ChartjsConfig';
 
+import 'flowbite';
+import 'flowbite-react';
+
 // Authentication and Authorization Component
 import ProtectedRoute from './components/auth/ProtectedRoute';
-import Unauthorized from './components/auth/Unauthorized';
+// import Unauthorized from './components/auth/Unauthorized';
 
 // Universal Pages
 import LandingPage from './pages/LandingPage';
@@ -18,6 +21,7 @@ import Login from './pages/auth/Login';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
+import AddTask from './pages/admin/AddTask';
 
 // User Pages
 import UserDashboard from './pages/user/UserDashboard';
@@ -29,7 +33,7 @@ function App() {
     document.querySelector('html').style.scrollBehavior = 'auto';
     window.scroll({ top: 0 });
     document.querySelector('html').style.scrollBehavior = '';
-  }, [location.pathname]); // triggered on route change
+  }, [location.pathname]);
 
   return (
     <>
@@ -43,6 +47,14 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/add-task"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AddTask />
             </ProtectedRoute>
           }
         />

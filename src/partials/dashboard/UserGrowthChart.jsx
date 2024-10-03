@@ -90,7 +90,7 @@ function UserGrowthChart() {
           </div>
         </div>
       </div>
-      <div className="w-full lg:w-1/2 lg:border-r-8">
+      <div className="w-full">
         {chartData && (
           <LineChartUserGrowth data={chartData} width={389} height={128} />
         )}
