@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
@@ -8,6 +8,11 @@ import Swal from 'sweetalert2';
 const AddTaskPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [file, setFile] = useState();
+
+  const taskTitleRef = useRef();
+  const taskDescriptionRef = useRef();
+  const rewardInputRef = useRef();
+  const medSosUrlRef = useRef();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -35,6 +40,13 @@ const AddTaskPage = () => {
           icon: 'success',
           title: 'Tugas ditambahkan!',
         });
+
+        // Reset input field after submitting
+        taskTitleRef.current.value = '';
+        taskDescriptionRef.current.value = '';
+        rewardInputRef.current.value = '';
+        medSosUrlRef.current.value = '';
+        setFile(null);
       }
     } catch (error) {
       console.error('Error adding task: ', error);
@@ -89,6 +101,7 @@ const AddTaskPage = () => {
                     <input
                       type="text"
                       id="taskTitle"
+                      ref={taskTitleRef}
                       name="taskTitle"
                       autoComplete="off"
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -107,6 +120,7 @@ const AddTaskPage = () => {
                     <input
                       type="text"
                       id="taskDescription"
+                      ref={taskDescriptionRef}
                       name="taskDescription"
                       autoComplete="off"
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -125,6 +139,7 @@ const AddTaskPage = () => {
                     <input
                       type="number"
                       id="rewardInput"
+                      ref={rewardInputRef}
                       name="rewardInput"
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       required
@@ -157,6 +172,7 @@ const AddTaskPage = () => {
                     <input
                       type="text"
                       id="medsosUrl"
+                      ref={medSosUrlRef}
                       name="medsosUrl"
                       autoComplete="off"
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
