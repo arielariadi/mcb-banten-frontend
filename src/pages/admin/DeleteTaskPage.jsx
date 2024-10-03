@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-
+import ReactPaginate from 'react-paginate';
 import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
 import ImageModal from '../../components/ImageModal';
-
 import config from '../../services/api-config/config';
 import getAllTasksService from '../../services/general/getAllTasks.service';
 
@@ -11,22 +10,27 @@ const DeleteTaskPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
-
   const [tasksData, setTasksData] = useState([]);
-  const page = 1;
+  const [pageCount, setPageCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
   const limit = 10;
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await getAllTasksService(page, limit);
+        const response = await getAllTasksService(currentPage + 1, limit);
         setTasksData(response.data);
+        setPageCount(Math.ceil(response.pagination.totalTasks / limit));
       } catch (error) {
         console.error('Error fetching tasks:', error);
       }
     };
     fetchTasks();
-  }, []);
+  }, [currentPage]);
+
+  const handlePageClick = (event) => {
+    setCurrentPage(event.selected);
+  };
 
   const openModal = (imageUrl) => {
     setSelectedImage(imageUrl);
@@ -101,58 +105,80 @@ const DeleteTaskPage = () => {
                     </thead>
                     {/* Table body */}
                     <tbody className="text-sm divide-y divide-gray-100 dark:divide-gray-700/60">
-                      {tasksData &&
-                        tasksData.map((task, index) => (
-                          <tr key={index}>
-                            <td className="p-2 whitespace-nowrap">
-                              <div className="text-center">{index + 1}</div>
-                            </td>
-                            <td className="p-2 whitespace-nowrap">
-                              <div className="text-left">{task.title}</div>
-                            </td>
-                            <td className="p-2 whitespace-nowrap">
-                              <div className="text-left">
-                                {task.description}
-                              </div>
-                            </td>
-                            <td className="p-2 whitespace-nowrap">
-                              <div className="text-left">
-                                <a href={task.socialMediaUrl} target="_blank">
-                                  {task.socialMediaUrl}
-                                </a>
-                              </div>
-                            </td>
-                            <td className="p-2 whitespace-nowrap">
-                              <div className="text-left">
-                                {task.image && (
-                                  <img
-                                    src={`${config.API_URL}/${task.image}`}
-                                    alt="image"
-                                    className="w-full cursor-pointer transition-transform duration-300 ease-in-out transform hover:scale-105"
-                                    onClick={() =>
-                                      openModal(
-                                        `${config.API_URL}/${task.image}`,
-                                      )
-                                    }
-                                  />
-                                )}
-                              </div>
-                            </td>
-                            <td className="p-2 whitespace-nowrap">
-                              <div className="text-left">{task.reward}</div>
-                            </td>
-                            <td className="p-2 whitespace-nowrap">
-                              <button
-                                type="submit"
-                                className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                      {tasksData.map((task, index) => (
+                        <tr key={task.id || index}>
+                          <td className="p-2 whitespace-nowrap">
+                            <div className="text-center">
+                              {index + 1 + currentPage * limit}
+                            </div>
+                          </td>
+                          <td className="p-2 whitespace-nowrap">
+                            <div className="text-left">{task.title}</div>
+                          </td>
+                          <td className="p-2 whitespace-nowrap">
+                            <div className="text-left">{task.description}</div>
+                          </td>
+                          <td className="p-2 whitespace-nowrap">
+                            <div className="text-left">
+                              <a
+                                href={task.socialMediaUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
                               >
-                                Hapus
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
+                                {task.socialMediaUrl}
+                              </a>
+                            </div>
+                          </td>
+                          <td className="p-2 whitespace-nowrap">
+                            <div className="text-left">
+                              {task.image && (
+                                <img
+                                  src={`${config.API_URL}/${task.image}`}
+                                  alt="image"
+                                  className="w-full cursor-pointer transition-transform duration-300 ease-in-out transform hover:scale-105"
+                                  onClick={() =>
+                                    openModal(`${config.API_URL}/${task.image}`)
+                                  }
+                                />
+                              )}
+                            </div>
+                          </td>
+                          <td className="p-2 whitespace-nowrap">
+                            <div className="text-center">{task.reward}</div>
+                          </td>
+                          <td className="p-2 whitespace-nowrap">
+                            <button
+                              type="button"
+                              className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                            >
+                              Hapus
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
+                </div>
+                {/* Pagination */}
+                <div className="mt-4">
+                  <ReactPaginate
+                    breakLabel="..."
+                    nextLabel="Next >"
+                    onPageChange={handlePageClick}
+                    pageRangeDisplayed={5}
+                    pageCount={pageCount}
+                    previousLabel="< Previous"
+                    renderOnZeroPageCount={null}
+                    containerClassName="pagination flex justify-center items-center space-x-2"
+                    pageClassName="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-lg"
+                    pageLinkClassName="px-3 py-2 leading-tight"
+                    activeClassName="bg-blue-50 border-blue-500 text-blue-600"
+                    previousClassName="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-lg"
+                    nextClassName="bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-lg"
+                    previousLinkClassName="px-3 py-2 leading-tight"
+                    nextLinkClassName="px-3 py-2 leading-tight"
+                    disabledClassName="opacity-50 cursor-not-allowed"
+                  />
                 </div>
               </div>
             </div>
@@ -160,7 +186,6 @@ const DeleteTaskPage = () => {
         </main>
       </div>
 
-      {/* Modal */}
       <ImageModal
         isOpen={modalOpen}
         onClose={closeModal}

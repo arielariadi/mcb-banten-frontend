@@ -1,7 +1,8 @@
 import plugin from 'tailwindcss/plugin';
 import forms from '@tailwindcss/forms';
 
-import flowbite from 'flowbite-react/tailwind';
+// import flowbite from 'flowbite-react/tailwind';
+const flowbite = require('flowbite-react/tailwind');
 
 export default {
   content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}', flowbite.content()],
