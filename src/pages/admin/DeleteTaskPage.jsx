@@ -1,15 +1,20 @@
 import { useState, useEffect } from 'react';
 import ReactPaginate from 'react-paginate';
+import Swal from 'sweetalert2';
+
 import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
 import ImageModal from '../../components/ImageModal';
+
 import config from '../../services/api-config/config';
 import getAllTasksService from '../../services/general/getAllTasks.service';
+import deleteTaskService from '../../services/admin/deleteTask.service';
 
 const DeleteTaskPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
+
   const [tasksData, setTasksData] = useState([]);
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
@@ -27,6 +32,47 @@ const DeleteTaskPage = () => {
     };
     fetchTasks();
   }, [currentPage]);
+
+  const handleDelete = async (id) => {
+    try {
+      const result = await Swal.fire({
+        icon: 'warning',
+        title: 'Apakah kamu yakin ingin menghapus tugas ini?',
+        showConfirmButton: true,
+        confirmButtonText: 'Ya, hapus',
+        showDenyButton: true,
+        denyButtonText: 'Tidak',
+      });
+      if (result.isConfirmed) {
+        const response = await deleteTaskService(id);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Tugas telah dihapus!',
+        });
+
+        // Update tasksData tanpa reload halaman
+        setTasksData((prevTasks) =>
+          prevTasks.filter((task) => task._id !== id),
+        );
+      }
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      let errorMessage = 'Terjadi kesalahan, silakan coba lagi!';
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        errorMessage = error.response.data.message;
+      }
+      Swal.fire({
+        icon: 'error',
+        title: 'OGagal menghapus tugas!',
+        text: errorMessage,
+      });
+    }
+  };
 
   const handlePageClick = (event) => {
     setCurrentPage(event.selected);
@@ -149,6 +195,7 @@ const DeleteTaskPage = () => {
                           <td className="p-2 whitespace-nowrap">
                             <button
                               type="button"
+                              onClick={() => handleDelete(task._id)}
                               className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                             >
                               Hapus

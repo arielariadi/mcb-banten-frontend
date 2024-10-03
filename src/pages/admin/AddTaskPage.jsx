@@ -30,7 +30,7 @@ const AddTaskPage = () => {
 
       if (result.isConfirmed) {
         const response = await createNewTaskService(data);
-        console.log('response api: ', response);
+
         Swal.fire({
           icon: 'success',
           title: 'Tugas ditambahkan!',
