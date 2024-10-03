@@ -79,7 +79,6 @@ const Navbar = () => {
         <div className="flex items-center justify-between py-4">
           <Link to="/" className="flex items-center">
             <img src={LogoSementara} alt="logo" className="h-8 w-auto" />
-            <span className="ml-2 text-xl font-bold text-white">PLAY PLAY</span>
           </Link>
 
           <nav className="hidden lg:flex justify-center flex-grow">

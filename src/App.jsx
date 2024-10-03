@@ -23,41 +23,41 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import UserDashboard from './pages/user/UserDashboard';
 
 function App() {
-	const location = useLocation();
+  const location = useLocation();
 
-	useEffect(() => {
-		document.querySelector('html').style.scrollBehavior = 'auto';
-		window.scroll({ top: 0 });
-		document.querySelector('html').style.scrollBehavior = '';
-	}, [location.pathname]); // triggered on route change
+  useEffect(() => {
+    document.querySelector('html').style.scrollBehavior = 'auto';
+    window.scroll({ top: 0 });
+    document.querySelector('html').style.scrollBehavior = '';
+  }, [location.pathname]); // triggered on route change
 
-	return (
-		<>
-			<Routes>
-				<Route path="/" element={<LandingPage />} />
-				<Route path="/auth/register" element={<Register />} />
-				<Route path="/auth/login" element={<Login />} />
+  return (
+    <>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/auth/register" element={<Register />} />
+        <Route path="/auth/login" element={<Login />} />
 
-				<Route
-					path="/admin/admin-dashboard"
-					element={
-						<ProtectedRoute allowedRoles={['admin']}>
-							<AdminDashboard />
-						</ProtectedRoute>
-					}
-				/>
+        <Route
+          path="/admin/admin-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
 
-				<Route
-					path="/user/user-dashboard"
-					element={
-						<ProtectedRoute allowedRoles={['user', 'admin']}>
-							<UserDashboard />
-						</ProtectedRoute>
-					}
-				/>
-			</Routes>
-		</>
-	);
+        <Route
+          path="/user/user-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['user', 'admin']}>
+              <UserDashboard />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </>
+  );
 }
 
 export default App;
