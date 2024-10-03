@@ -161,7 +161,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen, variant = 'default' }) {
 
               <li
                 className={`pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] ${
-                  pathname.includes('task') &&
+                  pathname.includes('add-task') &&
                   'from-violet-500/[0.12] dark:from-violet-500/[0.24] to-violet-500/[0.04]'
                 }`}
               >
@@ -169,7 +169,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen, variant = 'default' }) {
                   end
                   to="/admin/add-task"
                   className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${
-                    pathname.includes('task')
+                    pathname.includes('add-task')
                       ? ''
                       : 'hover:text-gray-900 dark:hover:text-white'
                   }`}
@@ -177,7 +177,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen, variant = 'default' }) {
                   <div className="flex items-center">
                     <svg
                       className={`shrink-0 fill-current ${
-                        pathname.includes('task')
+                        pathname.includes('add-task')
                           ? 'text-violet-500'
                           : 'text-gray-400 dark:text-gray-500'
                       }`}
@@ -199,6 +199,46 @@ function Sidebar({ sidebarOpen, setSidebarOpen, variant = 'default' }) {
                     </svg>
                     <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
                       Tambahkan Tugas
+                    </span>
+                  </div>
+                </NavLink>
+              </li>
+
+              <li
+                className={`pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] ${
+                  pathname.includes('delete-task') &&
+                  'from-violet-500/[0.12] dark:from-violet-500/[0.24] to-violet-500/[0.04]'
+                }`}
+              >
+                <NavLink
+                  end
+                  to="/admin/delete-task"
+                  className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${
+                    pathname.includes('delete-task')
+                      ? ''
+                      : 'hover:text-gray-900 dark:hover:text-white'
+                  }`}
+                >
+                  <div className="flex items-center">
+                    <svg
+                      className={`shrink-0 fill-current ${
+                        pathname.includes('delete-task')
+                          ? 'text-violet-500'
+                          : 'text-gray-400 dark:text-gray-500'
+                      }`}
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M8.586 2.586A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4a2 2 0 0 1 .586-1.414ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                      Hapus Tugas
                     </span>
                   </div>
                 </NavLink>

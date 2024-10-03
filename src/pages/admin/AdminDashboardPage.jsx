@@ -5,10 +5,10 @@ import Header from '../../partials/Header';
 
 import UserGrowthChart from '../../partials/dashboard/UserGrowthChart';
 
-import GetAllTasksService from '../../services/general/getAllTasks.service';
-import GetAllUsersService from '../../services/admin/getAllUsers.service';
+import getAllTasksService from '../../services/general/getAllTasks.service';
+import getAllUsersService from '../../services/admin/getAllUsers.service';
 
-function Dashboard() {
+function AdminDashboardPage() {
   const [tasks, setTasks] = useState([]);
   const [users, setUsers] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -16,7 +16,7 @@ function Dashboard() {
   useEffect(() => {
     const getTheNumberOfTasks = async () => {
       try {
-        const response = await GetAllTasksService();
+        const response = await getAllTasksService();
         setTasks(response.pagination);
       } catch (error) {
         console.log(error);
@@ -29,7 +29,7 @@ function Dashboard() {
   useEffect(() => {
     const getTheNumberOfUsers = async () => {
       try {
-        const response = await GetAllUsersService();
+        const response = await getAllUsersService();
         setUsers(response.pagination);
       } catch (error) {
         console.log(error);
@@ -94,4 +94,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default AdminDashboardPage;

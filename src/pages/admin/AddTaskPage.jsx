@@ -5,7 +5,7 @@ import Header from '../../partials/Header';
 import createNewTaskService from '../../services/admin/createNewTask.service';
 import Swal from 'sweetalert2';
 
-const AddTask = () => {
+const AddTaskPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [file, setFile] = useState();
 
@@ -90,6 +90,7 @@ const AddTask = () => {
                       type="text"
                       id="taskTitle"
                       name="taskTitle"
+                      autoComplete="off"
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       placeholder="Judul Tugas"
                       required
@@ -107,6 +108,7 @@ const AddTask = () => {
                       type="text"
                       id="taskDescription"
                       name="taskDescription"
+                      autoComplete="off"
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       placeholder="Deskripsi Tugas"
                       required
@@ -156,6 +158,7 @@ const AddTask = () => {
                       type="text"
                       id="medsosUrl"
                       name="medsosUrl"
+                      autoComplete="off"
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       placeholder="URL Media Sosial"
                       required
@@ -187,4 +190,4 @@ const AddTask = () => {
   );
 };
 
-export default AddTask;
+export default AddTaskPage;

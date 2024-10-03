@@ -20,8 +20,9 @@ import Register from './pages/auth/Register';
 import Login from './pages/auth/Login';
 
 // Admin Pages
-import AdminDashboard from './pages/admin/AdminDashboard';
-import AddTask from './pages/admin/AddTask';
+import AdminDashboardPage from './pages/admin/AdminDashboardPage';
+import AddTaskPage from './pages/admin/AddTaskPage';
+import DeleteTaskPage from './pages/admin/DeleteTaskPage';
 
 // User Pages
 import UserDashboard from './pages/user/UserDashboard';
@@ -38,15 +39,18 @@ function App() {
   return (
     <>
       <Routes>
+        {/* General Routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/auth/register" element={<Register />} />
         <Route path="/auth/login" element={<Login />} />
+        {/* End General Routes */}
 
+        {/* Admin Routes */}
         <Route
           path="/admin/admin-dashboard"
           element={
             <ProtectedRoute allowedRoles={['admin']}>
-              <AdminDashboard />
+              <AdminDashboardPage />
             </ProtectedRoute>
           }
         />
@@ -54,11 +58,21 @@ function App() {
           path="/admin/add-task"
           element={
             <ProtectedRoute allowedRoles={['admin']}>
-              <AddTask />
+              <AddTaskPage />
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/admin/delete-task"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <DeleteTaskPage />
+            </ProtectedRoute>
+          }
+        />
+        {/* End Admin Routes */}
 
+        {/* User Routes */}
         <Route
           path="/user/user-dashboard"
           element={
@@ -68,6 +82,7 @@ function App() {
           }
         />
       </Routes>
+      {/* End User Routes */}
     </>
   );
 }

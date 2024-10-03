@@ -1,7 +1,7 @@
 import axios from 'axios';
 import config from '../api-config/config';
 
-const GetAllUsersService = async () => {
+const getAllUsersService = async () => {
   try {
     const response = await axios.get(`${config.API_URL}/v1/admin/users-list`, {
       headers: {
@@ -14,4 +14,4 @@ const GetAllUsersService = async () => {
   }
 };
 
-export default GetAllUsersService;
+export default getAllUsersService;
