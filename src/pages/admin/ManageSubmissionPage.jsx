@@ -9,6 +9,7 @@ import ImageModal from '../../components/ImageModal';
 import config from '../../services/api-config/config';
 import getAllSubmissionsService from '../../services/admin/getAllSubmissions.service';
 import acceptUserSubmissionService from '../../services/admin/acceptUserSubmission.service';
+import rejectUserSubmissionService from '../../services/admin/rejectUserSubmission.service';
 
 const ManageSubmissionPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -54,7 +55,7 @@ const ManageSubmissionPage = () => {
     try {
       const result = await Swal.fire({
         icon: 'warning',
-        title: 'Apakah kamu yakin ingin menerima tugas ini?',
+        title: 'Apakah kamu yakin ingin menerima submission ini?',
         showConfirmButton: true,
         confirmButtonText: 'Ya, terima',
         showDenyButton: true,
@@ -62,16 +63,15 @@ const ManageSubmissionPage = () => {
       });
 
       if (result.isConfirmed) {
-        console.log('Sending data:', data);
         const response = await acceptUserSubmissionService(data);
 
         Swal.fire({
           icon: 'success',
-          title: 'Tugas telah diterima',
+          title: 'Submission telah diterima',
           text: response.message,
         });
 
-        // Refresh halaman setelah tugas diterima
+        // Refresh halaman setelah submission diterima
         const updatedResponse = await getAllSubmissionsService(
           currentPage + 1,
           limit,
@@ -86,7 +86,63 @@ const ManageSubmissionPage = () => {
       }
       Swal.fire({
         icon: 'error',
-        title: 'Gagal menerima tugas!',
+        title: 'Gagal menerima submission!',
+        text: errorMessage,
+      });
+    }
+  };
+
+  const handleRejectSubmission = async (id) => {
+    const reason = rejectionReason[id] || '';
+    if (!reason.trim()) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Tolong berikan pesan terlebih dahulu sebelum melakukan aksi!',
+      });
+      return;
+    }
+
+    const data = {
+      id: id,
+      rejectedReason: rejectionReason[id] || '',
+    };
+
+    try {
+      const result = await Swal.fire({
+        icon: 'warning',
+        title: 'Apakah kamu yakin ingin menolak submission ini?',
+        showConfirmButton: true,
+        confirmButtonText: 'Ya, terima',
+        showDenyButton: true,
+        denyButtonText: 'Tidak',
+      });
+
+      if (result.isConfirmed) {
+        const response = await rejectUserSubmissionService(data);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Submission telah ditolak',
+          text: response.message,
+        });
+
+        // Refresh halaman setelah tugas diterima
+        const updatedResponse = await getAllSubmissionsService(
+          currentPage + 1,
+          limit,
+        );
+        setSubmissions(updatedResponse.data);
+      }
+    } catch (error) {
+      console.error('Error rejecting submission:', error);
+      let errorMessage = 'Terjadi kesalahan, silakan coba lagi!';
+      if (error.message) {
+        errorMessage = error.message;
+      }
+      Swal.fire({
+        icon: 'error',
+        title: 'Gagal menolak submission!',
         text: errorMessage,
       });
     }
@@ -334,6 +390,10 @@ const ManageSubmissionPage = () => {
 
                             <button
                               type="button"
+                              onClick={() =>
+                                handleRejectSubmission(submission._id)
+                              }
+                              disabled={submission.status !== 'pending'}
                               className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                             >
                               Tolak

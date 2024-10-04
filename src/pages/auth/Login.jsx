@@ -81,6 +81,7 @@ const Login = () => {
               type="email"
               name="email"
               id="email"
+              autoComplete="off"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               required

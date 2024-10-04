@@ -1,10 +1,10 @@
 import axios from 'axios';
 import config from '../api-config/config';
 
-const acceptUserSubmissionService = async (data) => {
+const rejectUserSubmissionService = async (data) => {
   try {
     const response = await axios.patch(
-      `${config.API_URL}/v1/admin/accept-submission`,
+      `${config.API_URL}/v1/admin/reject-submission`,
       data,
       {
         headers: {
@@ -22,4 +22,4 @@ const acceptUserSubmissionService = async (data) => {
   }
 };
 
-export default acceptUserSubmissionService;
+export default rejectUserSubmissionService;
