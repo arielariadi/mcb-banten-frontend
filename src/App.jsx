@@ -23,6 +23,7 @@ import Login from './pages/auth/Login';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import AddTaskPage from './pages/admin/AddTaskPage';
 import DeleteTaskPage from './pages/admin/DeleteTaskPage';
+import ManageSubmissionPage from './pages/admin/ManageSubmissionPage';
 
 // User Pages
 import UserDashboard from './pages/user/UserDashboard';
@@ -67,6 +68,14 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <DeleteTaskPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/manage-submission"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <ManageSubmissionPage />
             </ProtectedRoute>
           }
         />

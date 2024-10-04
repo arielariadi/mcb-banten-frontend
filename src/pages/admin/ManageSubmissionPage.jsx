@@ -7,71 +7,37 @@ import Header from '../../partials/Header';
 import ImageModal from '../../components/ImageModal';
 
 import config from '../../services/api-config/config';
-import getAllTasksService from '../../services/general/getAllTasks.service';
-import deleteTaskService from '../../services/admin/deleteTask.service';
-
-const DeleteTaskPage = () => {
+import getAllSubmissionsService from '../../services/admin/getAllSubmissions.service';
+const ManageSubmissionPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
 
-  const [tasksData, setTasksData] = useState([]);
+  const [submissions, setSubmissions] = useState([]);
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const limit = 10;
 
   useEffect(() => {
-    const fetchTasks = async () => {
+    const fetchSubmissions = async () => {
       try {
-        const response = await getAllTasksService(currentPage + 1, limit);
-        setTasksData(response.data);
-        setPageCount(Math.ceil(response.pagination.totalTasks / limit));
+        const response = await getAllSubmissionsService(currentPage + 1, limit);
+        setSubmissions(response.data);
+        setPageCount(Math.ceil(response.pagination.totalSubmissions / limit));
       } catch (error) {
-        console.error('Error fetching tasks:', error);
+        console.error('Error fetching submissions:', error);
       }
     };
-    fetchTasks();
+    fetchSubmissions();
   }, [currentPage]);
 
-  const handleDelete = async (id) => {
-    try {
-      const result = await Swal.fire({
-        icon: 'warning',
-        title: 'Apakah kamu yakin ingin menghapus tugas ini?',
-        showConfirmButton: true,
-        confirmButtonText: 'Ya, hapus',
-        showDenyButton: true,
-        denyButtonText: 'Tidak',
-      });
-      if (result.isConfirmed) {
-        const response = await deleteTaskService(id);
-
-        Swal.fire({
-          icon: 'success',
-          title: 'Tugas telah dihapus!',
-        });
-
-        // Update tasksData tanpa reload halaman
-        setTasksData((prevTasks) =>
-          prevTasks.filter((task) => task._id !== id),
-        );
-      }
-    } catch (error) {
-      console.error('Error deleting task:', error);
-      let errorMessage = 'Terjadi kesalahan, silakan coba lagi!';
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        errorMessage = error.response.data.message;
-      }
-      Swal.fire({
-        icon: 'error',
-        title: 'OGagal menghapus tugas!',
-        text: errorMessage,
-      });
-    }
+  const formattedDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('id-ID', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
   };
 
   const handlePageClick = (event) => {
@@ -94,13 +60,13 @@ const DeleteTaskPage = () => {
 
       <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
         <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
-        <main className="grow">
+        <main>
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
             <div className="sm:flex sm:justify-between sm:items-center mb-8">
+              {/* Left: Title */}
               <div className="mb-4 sm:mb-0">
                 <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">
-                  Lihat dan Hapus Tugas
+                  Manage Submission
                 </h1>
               </div>
             </div>
@@ -122,26 +88,53 @@ const DeleteTaskPage = () => {
                           <div className="font-semibold text-center">No</div>
                         </th>
                         <th className="p-2 whitespace-nowrap">
-                          <div className="font-semibold text-center">Judul</div>
-                        </th>
-                        <th className="p-2 whitespace-nowrap">
                           <div className="font-semibold text-center">
-                            Deskripsi
+                            Nama User
                           </div>
                         </th>
                         <th className="p-2 whitespace-nowrap">
                           <div className="font-semibold text-center">
-                            URL Media Sosial
+                            Judul Tugas
                           </div>
                         </th>
                         <th className="p-2 whitespace-nowrap">
                           <div className="font-semibold text-center">
-                            Gambar Media Sosial
+                            Deskripsi Tugas
                           </div>
                         </th>
                         <th className="p-2 whitespace-nowrap">
                           <div className="font-semibold text-center">
-                            Reward
+                            URL Medsos Tugas
+                          </div>
+                        </th>
+                        <th className="p-7 whitespace-nowrap">
+                          <div className="font-semibold text-center">
+                            Bukti Foto
+                          </div>
+                        </th>
+                        <th className="p-2 whitespace-nowrap">
+                          <div className="font-semibold text-center">
+                            Penjelasan User
+                          </div>
+                        </th>
+                        <th className="p-2 whitespace-nowrap">
+                          <div className="font-semibold text-center">
+                            Status
+                          </div>
+                        </th>
+                        <th className="p-2 whitespace-nowrap">
+                          <div className="font-semibold text-center">
+                            Dikirim Pada
+                          </div>
+                        </th>
+                        <th className="p-2 whitespace-nowrap">
+                          <div className="font-semibold text-center">
+                            Alasan Ditolak
+                          </div>
+                        </th>
+                        <th className="p-2 whitespace-nowrap">
+                          <div className="font-semibold text-center">
+                            Divalidasi Pada
                           </div>
                         </th>
                         <th className="p-2 whitespace-nowrap">
@@ -151,54 +144,106 @@ const DeleteTaskPage = () => {
                     </thead>
                     {/* Table body */}
                     <tbody className="text-sm divide-y divide-gray-100 dark:divide-gray-700/60">
-                      {tasksData.map((task, index) => (
-                        <tr key={task.id || index}>
+                      {submissions.map((submission, index) => (
+                        <tr key={submission.id || index}>
                           <td className="p-2 whitespace-nowrap">
                             <div className="text-center">
                               {index + 1 + currentPage * limit}
                             </div>
                           </td>
                           <td className="p-2 whitespace-nowrap">
-                            <div className="text-left">{task.title}</div>
+                            <div className="text-left">
+                              {submission.user?.username}
+                            </div>
                           </td>
                           <td className="p-2 whitespace-nowrap">
-                            <div className="text-left">{task.description}</div>
+                            <div className="text-left">
+                              {submission.task?.title}
+                            </div>
+                          </td>
+                          <td className="p-2 whitespace-nowrap">
+                            <div className="text-left">
+                              {submission.task?.description}
+                            </div>
                           </td>
                           <td className="p-2 whitespace-nowrap">
                             <div className="text-left">
                               <a
-                                href={task.socialMediaUrl}
+                                href={submission.task?.socialMediaUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
                               >
-                                {task.socialMediaUrl}
+                                {submission.task?.socialMediaUrl}
                               </a>
                             </div>
                           </td>
                           <td className="p-2 whitespace-nowrap min-w-40">
                             <div className="text-left">
-                              {task.image && (
-                                <img
-                                  src={`${config.API_URL}/${task.image}`}
-                                  onClick={() =>
-                                    openModal(`${config.API_URL}/${task.image}`)
-                                  }
-                                  alt="image"
-                                  className="w-full cursor-pointer transition-transform duration-300 ease-in-out transform hover:scale-105"
-                                />
-                              )}
+                              <img
+                                src={`${config.API_URL}/${
+                                  submission.taskScreenshot
+                                }`}
+                                onClick={() =>
+                                  openModal(
+                                    `${config.API_URL}/${submission.taskScreenshot}`,
+                                  )
+                                }
+                                alt="image"
+                                className="w-full cursor-pointer transition-transform duration-300 ease-in-out transform hover:scale-105"
+                              />
                             </div>
                           </td>
                           <td className="p-2 whitespace-nowrap">
-                            <div className="text-center">{task.reward}</div>
+                            <div className="text-center">
+                              {submission.description}
+                            </div>
+                          </td>
+                          <td className="p-2 whitespace-nowrap">
+                            <div className="text-center">
+                              <span className="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">
+                                {submission.status}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="p-2 whitespace-nowrap">
+                            <div className="text-center">
+                              {formattedDate(submission.submittedAt)}
+                            </div>
+                          </td>
+                          <td className="p-2 whitespace-nowrap min-w-96">
+                            <div className="text-center">
+                              <div>
+                                <textarea
+                                  id="message"
+                                  rows="4"
+                                  className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                  placeholder="Wajib diisi jika ditolak maupun diterima!"
+                                >
+                                  {submission.rejectedReason}
+                                </textarea>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="p-2 whitespace-nowrap">
+                            <div className="text-center">
+                              {submission.validatedAt
+                                ? formattedDate(submission.validatedAt)
+                                : 'Tugas belum divalidasi'}
+                            </div>
                           </td>
                           <td className="p-2 whitespace-nowrap">
                             <button
                               type="button"
-                              onClick={() => handleDelete(task._id)}
+                              className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                            >
+                              Terima
+                            </button>
+
+                            <button
+                              type="button"
                               className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                             >
-                              Hapus
+                              Tolak
                             </button>
                           </td>
                         </tr>
@@ -242,4 +287,4 @@ const DeleteTaskPage = () => {
   );
 };
 
-export default DeleteTaskPage;
+export default ManageSubmissionPage;
