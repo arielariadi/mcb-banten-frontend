@@ -68,7 +68,7 @@ const DeleteTaskPage = () => {
       }
       Swal.fire({
         icon: 'error',
-        title: 'OGagal menghapus tugas!',
+        title: 'Gagal menghapus tugas!',
         text: errorMessage,
       });
     }

@@ -8,12 +8,16 @@ import ImageModal from '../../components/ImageModal';
 
 import config from '../../services/api-config/config';
 import getAllSubmissionsService from '../../services/admin/getAllSubmissions.service';
+import acceptUserSubmissionService from '../../services/admin/acceptUserSubmission.service';
+
 const ManageSubmissionPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
 
   const [submissions, setSubmissions] = useState([]);
+  const [rejectionReason, setRejectionReason] = useState('');
+
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const limit = 10;
@@ -31,12 +35,75 @@ const ManageSubmissionPage = () => {
     fetchSubmissions();
   }, [currentPage]);
 
+  const handleAcceptSubmission = async (id) => {
+    const reason = rejectionReason[id] || '';
+    if (!reason.trim()) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Tolong berikan alasan terlebih dahulu sebelum melakukan aksi!',
+      });
+      return;
+    }
+
+    const data = {
+      id: id,
+      rejectedReason: rejectionReason[id] || '',
+    };
+
+    try {
+      const result = await Swal.fire({
+        icon: 'warning',
+        title: 'Apakah kamu yakin ingin menerima tugas ini?',
+        showConfirmButton: true,
+        confirmButtonText: 'Ya, terima',
+        showDenyButton: true,
+        denyButtonText: 'Tidak',
+      });
+
+      if (result.isConfirmed) {
+        console.log('Sending data:', data);
+        const response = await acceptUserSubmissionService(data);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Tugas telah diterima',
+          text: response.message,
+        });
+
+        // Refresh halaman setelah tugas diterima
+        const updatedResponse = await getAllSubmissionsService(
+          currentPage + 1,
+          limit,
+        );
+        setSubmissions(updatedResponse.data);
+      }
+    } catch (error) {
+      console.error('Error accepting submission:', error);
+      let errorMessage = 'Terjadi kesalahan, silakan coba lagi!';
+      if (error.message) {
+        errorMessage = error.message;
+      }
+      Swal.fire({
+        icon: 'error',
+        title: 'Gagal menerima tugas!',
+        text: errorMessage,
+      });
+    }
+  };
+
+  const handleReasonChange = (id, value) => {
+    setRejectionReason((prev) => ({ ...prev, [id]: value }));
+  };
+
   const formattedDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('id-ID', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
     });
   };
 
@@ -200,9 +267,23 @@ const ManageSubmissionPage = () => {
                           </td>
                           <td className="p-2 whitespace-nowrap">
                             <div className="text-center">
-                              <span className="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">
-                                {submission.status}
-                              </span>
+                              {submission.status === 'pending' && (
+                                <div className="text-center">
+                                  <span className="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">
+                                    {submission.status}
+                                  </span>
+                                </div>
+                              )}
+                              {submission.status === 'accepted' && (
+                                <span className="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
+                                  {submission.status}
+                                </span>
+                              )}
+                              {submission.status === 'rejected' && (
+                                <span className="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">
+                                  {submission.status}
+                                </span>
+                              )}
                             </div>
                           </td>
                           <td className="p-2 whitespace-nowrap">
@@ -216,11 +297,16 @@ const ManageSubmissionPage = () => {
                                 <textarea
                                   id="message"
                                   rows="4"
+                                  value={rejectionReason[submission._id] || ''}
+                                  onChange={(e) =>
+                                    handleReasonChange(
+                                      submission._id,
+                                      e.target.value,
+                                    )
+                                  }
                                   className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                   placeholder="Wajib diisi jika ditolak maupun diterima!"
-                                >
-                                  {submission.rejectedReason}
-                                </textarea>
+                                ></textarea>
                               </div>
                             </div>
                           </td>
@@ -234,6 +320,10 @@ const ManageSubmissionPage = () => {
                           <td className="p-2 whitespace-nowrap">
                             <button
                               type="button"
+                              onClick={() =>
+                                handleAcceptSubmission(submission._id)
+                              }
+                              disabled={submission.status !== 'pending'}
                               className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
                             >
                               Terima
