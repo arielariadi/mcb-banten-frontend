@@ -41,7 +41,7 @@ const ManageSubmissionPage = () => {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Tolong berikan alasan terlebih dahulu sebelum melakukan aksi!',
+        text: 'Tolong berikan pesan terlebih dahulu sebelum melakukan aksi!',
       });
       return;
     }
@@ -195,9 +195,7 @@ const ManageSubmissionPage = () => {
                           </div>
                         </th>
                         <th className="p-2 whitespace-nowrap">
-                          <div className="font-semibold text-center">
-                            Alasan Ditolak
-                          </div>
+                          <div className="font-semibold text-center">Pesan</div>
                         </th>
                         <th className="p-2 whitespace-nowrap">
                           <div className="font-semibold text-center">
@@ -292,8 +290,9 @@ const ManageSubmissionPage = () => {
                             </div>
                           </td>
                           <td className="p-2 whitespace-nowrap min-w-96">
-                            <div className="text-center">
-                              <div>
+                            {submission.rejectedReason === null ||
+                            !submission.rejectedReason ? (
+                              <div className="text-center">
                                 <textarea
                                   id="message"
                                   rows="4"
@@ -308,7 +307,11 @@ const ManageSubmissionPage = () => {
                                   placeholder="Wajib diisi jika ditolak maupun diterima!"
                                 ></textarea>
                               </div>
-                            </div>
+                            ) : (
+                              <div className="text-center">
+                                {submission.rejectedReason}
+                              </div>
+                            )}
                           </td>
                           <td className="p-2 whitespace-nowrap">
                             <div className="text-center">
