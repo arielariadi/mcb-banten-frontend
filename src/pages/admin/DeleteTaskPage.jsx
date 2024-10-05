@@ -74,6 +74,10 @@ const DeleteTaskPage = () => {
     }
   };
 
+  const formattedNumber = (number) => {
+    return number.toLocaleString('id-ID');
+  };
+
   const handlePageClick = (event) => {
     setCurrentPage(event.selected);
   };
@@ -152,7 +156,7 @@ const DeleteTaskPage = () => {
                     {/* Table body */}
                     <tbody className="text-sm divide-y divide-gray-100 dark:divide-gray-700/60">
                       {tasksData.map((task, index) => (
-                        <tr key={task.id || index}>
+                        <tr key={task._id || index}>
                           <td className="p-2 whitespace-nowrap">
                             <div className="text-center">
                               {index + 1 + currentPage * limit}
@@ -190,7 +194,9 @@ const DeleteTaskPage = () => {
                             </div>
                           </td>
                           <td className="p-2 whitespace-nowrap">
-                            <div className="text-center">{task.reward}</div>
+                            <div className="text-center">
+                              {formattedNumber(task.reward)}
+                            </div>
                           </td>
                           <td className="p-2 whitespace-nowrap">
                             <button

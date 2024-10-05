@@ -24,6 +24,7 @@ import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import AddTaskPage from './pages/admin/AddTaskPage';
 import DeleteTaskPage from './pages/admin/DeleteTaskPage';
 import ManageSubmissionPage from './pages/admin/ManageSubmissionPage';
+import ManageWithdrawalPage from './pages/admin/ManageWithdrawal';
 
 // User Pages
 import UserDashboard from './pages/user/UserDashboard';
@@ -76,6 +77,14 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <ManageSubmissionPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/manage-withdrawal"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <ManageWithdrawalPage />
             </ProtectedRoute>
           }
         />

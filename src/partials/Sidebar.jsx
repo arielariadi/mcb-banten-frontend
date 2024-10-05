@@ -284,6 +284,52 @@ function Sidebar({ sidebarOpen, setSidebarOpen, variant = 'default' }) {
                   </div>
                 </NavLink>
               </li>
+
+              <li
+                className={`pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-[linear-gradient(135deg,var(--tw-gradient-stops))] ${
+                  pathname.includes('manage-withdrawal') &&
+                  'from-violet-500/[0.12] dark:from-violet-500/[0.24] to-violet-500/[0.04]'
+                }`}
+              >
+                <NavLink
+                  end
+                  to="/admin/manage-withdrawal"
+                  className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${
+                    pathname.includes('manage-withdrawal')
+                      ? ''
+                      : 'hover:text-gray-900 dark:hover:text-white'
+                  }`}
+                >
+                  <div className="flex items-center">
+                    <svg
+                      className={`shrink-0 fill-current ${
+                        pathname.includes('manage-withdrawal')
+                          ? 'text-violet-500'
+                          : 'text-gray-400 dark:text-gray-500'
+                      }`}
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M7 6a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-2v-4a3 3 0 0 0-3-3H7V6Z"
+                        clipRule="evenodd"
+                      />
+                      <path
+                        fillRule="evenodd"
+                        d="M2 11a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7Zm7.5 1a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Z"
+                        clipRule="evenodd"
+                      />
+                      <path d="M10.5 14.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z" />
+                    </svg>
+                    <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                      Kelola Penarikan
+                    </span>
+                  </div>
+                </NavLink>
+              </li>
             </ul>
           </div>
         </div>

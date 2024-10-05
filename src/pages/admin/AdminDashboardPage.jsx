@@ -8,10 +8,11 @@ import UserGrowthChart from '../../partials/dashboard/UserGrowthChart';
 import getAllTasksService from '../../services/general/getAllTasks.service';
 import getAllUsersService from '../../services/admin/getAllUsers.service';
 
-function AdminDashboardPage() {
+const AdminDashboardPage = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   const [tasks, setTasks] = useState([]);
   const [users, setUsers] = useState([]);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const getTheNumberOfTasks = async () => {
@@ -63,7 +64,7 @@ function AdminDashboardPage() {
 
             <div className="flex flex-col col-span-full sm:col-span-6 xl:col-span-4 lg:flex-row bg-white dark:bg-gray-800 shadow-sm rounded-xl">
               <div className="w-full">
-                <div className="min-h-60 p-5 border bg-blue-500 flex flex-col justify-center items-center">
+                <div className="min-h-60 p-5 border bg-blue-500 dark:border-gray-600 flex flex-col justify-center items-center">
                   <h1 className="text-2xl font-bold text-center">
                     Jumlah User
                   </h1>
@@ -73,7 +74,7 @@ function AdminDashboardPage() {
                 </div>
               </div>
               <div className="w-full">
-                <div className="min-h-60 p-5 border bg-blue-500 flex flex-col justify-center items-center">
+                <div className="min-h-60 p-5 border bg-blue-500 dark:border-gray-600 flex flex-col justify-center items-center">
                   <h1 className="text-2xl font-bold text-center">
                     Jumlah Tugas
                   </h1>
@@ -92,6 +93,6 @@ function AdminDashboardPage() {
       </div>
     </div>
   );
-}
+};
 
 export default AdminDashboardPage;
