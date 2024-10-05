@@ -5,9 +5,12 @@ import './css/style.css';
 
 import './charts/ChartjsConfig';
 
+import 'flowbite';
+import 'flowbite-react';
+
 // Authentication and Authorization Component
 import ProtectedRoute from './components/auth/ProtectedRoute';
-import Unauthorized from './components/auth/Unauthorized';
+// import Unauthorized from './components/auth/Unauthorized';
 
 // Universal Pages
 import LandingPage from './pages/LandingPage';
@@ -17,47 +20,89 @@ import Register from './pages/auth/Register';
 import Login from './pages/auth/Login';
 
 // Admin Pages
-import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminDashboardPage from './pages/admin/AdminDashboardPage';
+import AddTaskPage from './pages/admin/AddTaskPage';
+import DeleteTaskPage from './pages/admin/DeleteTaskPage';
+import ManageSubmissionPage from './pages/admin/ManageSubmissionPage';
+import ManageWithdrawalPage from './pages/admin/ManageWithdrawal';
 
 // User Pages
 import UserDashboard from './pages/user/UserDashboard';
 
 function App() {
-	const location = useLocation();
+  const location = useLocation();
 
-	useEffect(() => {
-		document.querySelector('html').style.scrollBehavior = 'auto';
-		window.scroll({ top: 0 });
-		document.querySelector('html').style.scrollBehavior = '';
-	}, [location.pathname]); // triggered on route change
+  useEffect(() => {
+    document.querySelector('html').style.scrollBehavior = 'auto';
+    window.scroll({ top: 0 });
+    document.querySelector('html').style.scrollBehavior = '';
+  }, [location.pathname]);
 
-	return (
-		<>
-			<Routes>
-				<Route path="/" element={<LandingPage />} />
-				<Route path="/auth/register" element={<Register />} />
-				<Route path="/auth/login" element={<Login />} />
+  return (
+    <>
+      <Routes>
+        {/* General Routes */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/auth/register" element={<Register />} />
+        <Route path="/auth/login" element={<Login />} />
+        {/* End General Routes */}
 
-				<Route
-					path="/admin/admin-dashboard"
-					element={
-						<ProtectedRoute allowedRoles={['admin']}>
-							<AdminDashboard />
-						</ProtectedRoute>
-					}
-				/>
+        {/* Admin Routes */}
+        <Route
+          path="/admin/admin-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/add-task"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AddTaskPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/delete-task"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <DeleteTaskPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/manage-submission"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <ManageSubmissionPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/manage-withdrawal"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <ManageWithdrawalPage />
+            </ProtectedRoute>
+          }
+        />
+        {/* End Admin Routes */}
 
-				<Route
-					path="/user/user-dashboard"
-					element={
-						<ProtectedRoute allowedRoles={['user', 'admin']}>
-							<UserDashboard />
-						</ProtectedRoute>
-					}
-				/>
-			</Routes>
-		</>
-	);
+        {/* User Routes */}
+        <Route
+          path="/user/user-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['user', 'admin']}>
+              <UserDashboard />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+      {/* End User Routes */}
+    </>
+  );
 }
 
 export default App;
