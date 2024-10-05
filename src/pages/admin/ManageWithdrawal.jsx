@@ -9,6 +9,7 @@ import ImageModal from '../../components/ImageModal';
 import config from '../../services/api-config/config';
 import getAllWithDrawalsService from '../../services/admin/getAllWithdrawals.service';
 import acceptUserWithdrawalService from '../../services/admin/acceptUserWithdrawal.service';
+import rejectUserWithdrawalService from '../../services/admin/rejectUserWithdrawal.service';
 
 const ManageWithdrawalPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -89,6 +90,62 @@ const ManageWithdrawalPage = () => {
       Swal.fire({
         icon: 'error',
         title: 'Gagal menerima penarikan reward!',
+        text: errorMessage,
+      });
+    }
+  };
+
+  const handleRejectWithdrawal = async (id) => {
+    const reason = adminMessage[id] || '';
+    if (!reason.trim()) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Tolong berikan pesan terlebih dahulu sebelum melakukan aksi!',
+      });
+      return;
+    }
+
+    const data = {
+      id: id,
+      rejectedReason: adminMessage[id] || '',
+    };
+
+    try {
+      const result = await Swal.fire({
+        icon: 'warning',
+        title: 'Apakah kamu yakin ingin menolak request penarikan reward ini?',
+        showConfirmButton: true,
+        confirmButtonText: 'Ya, terima',
+        showDenyButton: true,
+        denyButtonText: 'Tidak',
+      });
+
+      if (result.isConfirmed) {
+        const response = await rejectUserWithdrawalService(data);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Penarikan reward telah ditolak',
+          text: `Penarikan reward dengan nominal ${formattedNumber(response.data.amount)} telah ditolak!`,
+        });
+
+        // Refresh halaman setelah tugas diterima
+        const updatedResponse = await getAllWithDrawalsService(
+          currentPage + 1,
+          limit,
+        );
+        setWithdrawalsData(updatedResponse.data);
+      }
+    } catch (error) {
+      console.error('Error rejecting withdrawal:', error);
+      let errorMessage = 'Terjadi kesalahan, silakan coba lagi!';
+      if (error.message) {
+        errorMessage = error.message;
+      }
+      Swal.fire({
+        icon: 'error',
+        title: 'Gagal menolak penarikan reward!',
         text: errorMessage,
       });
     }
@@ -301,16 +358,16 @@ const ManageWithdrawalPage = () => {
                               Terima
                             </button>
 
-                            {/* <button
+                            <button
                               type="button"
                               onClick={() =>
-                                handleRejectSubmission(submission._id)
+                                handleRejectWithdrawal(withdrawal._id)
                               }
-                              disabled={submission.status !== 'pending'}
+                              disabled={withdrawal.status !== 'pending'}
                               className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                             >
                               Tolak
-                            </button> */}
+                            </button>
                           </td>
                         </tr>
                       ))}
