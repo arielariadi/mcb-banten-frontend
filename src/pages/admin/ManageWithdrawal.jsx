@@ -8,13 +8,14 @@ import ImageModal from '../../components/ImageModal';
 
 import config from '../../services/api-config/config';
 import getAllWithDrawalsService from '../../services/admin/getAllWithdrawals.service';
+import acceptUserWithdrawalService from '../../services/admin/acceptUserWithdrawal.service';
 
 const ManageWithdrawalPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
 
-  const [withdrawalsData, setWithdrawals] = useState([]);
+  const [withdrawalsData, setWithdrawalsData] = useState([]);
   const [adminMessage, setAdminMessage] = useState('');
 
   const [pageCount, setPageCount] = useState(0);
@@ -25,8 +26,7 @@ const ManageWithdrawalPage = () => {
     const fetchWithdrawals = async () => {
       try {
         const response = await getAllWithDrawalsService(currentPage + 1, limit);
-        setWithdrawals(response.data);
-        console.log(response.data);
+        setWithdrawalsData(response.data);
         setPageCount(Math.ceil(response.pagination.totalWithdrawals / limit));
       } catch (error) {
         console.error('Error fetching withdrawals: ', error);
@@ -35,6 +35,64 @@ const ManageWithdrawalPage = () => {
 
     fetchWithdrawals();
   }, [currentPage]);
+
+  const handleAcceptWithdrawal = async (id) => {
+    const reason = adminMessage[id] || '';
+    if (!reason.trim()) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Tolong berikan pesan terlebih dahulu sebelum melakukan aksi!',
+      });
+      return;
+    }
+
+    const data = {
+      id: id,
+      rejectedReason: adminMessage[id] || '',
+    };
+
+    try {
+      const result = await Swal.fire({
+        icon: 'warning',
+        title:
+          'Apakah kamu yakin ingin menyetujui request penarikan reward ini?',
+        showConfirmButton: true,
+        confirmButtonText: 'Ya, setujui',
+        showDenyButton: true,
+        denyButtonText: 'Tidak',
+      });
+
+      if (result.isConfirmed) {
+        const response = await acceptUserWithdrawalService(data);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Penarikan reward disetujui',
+          text: `Penarikan reward dengan nominal ${formattedNumber(response.data.amount)} telah disetujui!`,
+        });
+
+        // Refresh halaman setelah withdrawal disetujui
+        const updatedResponse = await getAllWithDrawalsService(
+          currentPage + 1,
+          limit,
+        );
+
+        setWithdrawalsData(updatedResponse.data);
+      }
+    } catch (error) {
+      console.error('Error approving withdrawal:', error);
+      let errorMessage = 'Terjadi kesalahan, silakan coba lagi!';
+      if (error.message) {
+        errorMessage = error.message;
+      }
+      Swal.fire({
+        icon: 'error',
+        title: 'Gagal menerima penarikan reward!',
+        text: errorMessage,
+      });
+    }
+  };
 
   const formattedNumber = (number) => {
     return number.toLocaleString('id-ID');
@@ -49,6 +107,14 @@ const ManageWithdrawalPage = () => {
       hour: 'numeric',
       minute: 'numeric',
     });
+  };
+
+  const handleMessageChange = (id, value) => {
+    setAdminMessage((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const handlePageClick = (event) => {
+    setCurrentPage(event.selected);
   };
 
   return (
@@ -201,7 +267,7 @@ const ManageWithdrawalPage = () => {
                                   rows="4"
                                   value={adminMessage[withdrawal._id] || ''}
                                   onChange={(e) =>
-                                    handleReasonChange(
+                                    handleMessageChange(
                                       withdrawal._id,
                                       e.target.value,
                                     )
@@ -220,22 +286,22 @@ const ManageWithdrawalPage = () => {
                             <div className="text-center">
                               {withdrawal.validatedAt
                                 ? formattedDate(withdrawal.validatedAt)
-                                : 'Submission belum divalidasi'}
+                                : 'Request penarikan belum divalidasi'}
                             </div>
                           </td>
-                          {/* <td className="p-2 whitespace-nowrap">
+                          <td className="p-2 whitespace-nowrap">
                             <button
                               type="button"
                               onClick={() =>
-                                handleAcceptSubmission(submission._id)
+                                handleAcceptWithdrawal(withdrawal._id)
                               }
-                              disabled={submission.status !== 'pending'}
+                              disabled={withdrawal.status !== 'pending'}
                               className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
                             >
                               Terima
                             </button>
 
-                            <button
+                            {/* <button
                               type="button"
                               onClick={() =>
                                 handleRejectSubmission(submission._id)
@@ -244,15 +310,15 @@ const ManageWithdrawalPage = () => {
                               className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                             >
                               Tolak
-                            </button>
-                          </td> */}
+                            </button> */}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
                 {/* Pagination */}
-                {/* <div className="mt-4">
+                <div className="mt-4">
                   <ReactPaginate
                     breakLabel="..."
                     nextLabel="Next >"
@@ -271,7 +337,7 @@ const ManageWithdrawalPage = () => {
                     nextLinkClassName="px-3 py-2 leading-tight"
                     disabledClassName="opacity-50 cursor-not-allowed"
                   />
-                </div> */}
+                </div>
               </div>
             </div>
           </div>

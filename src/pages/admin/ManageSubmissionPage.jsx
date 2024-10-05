@@ -17,7 +17,7 @@ const ManageSubmissionPage = () => {
   const [selectedImage, setSelectedImage] = useState('');
 
   const [submissions, setSubmissions] = useState([]);
-  const [rejectionReason, setRejectionReason] = useState('');
+  const [adminMessage, setAdminMessage] = useState('');
 
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
@@ -37,11 +37,11 @@ const ManageSubmissionPage = () => {
   }, [currentPage]);
 
   const handleAcceptSubmission = async (id) => {
-    const reason = rejectionReason[id] || '';
+    const reason = adminMessage[id] || '';
     if (!reason.trim()) {
       Swal.fire({
         icon: 'error',
-        title: 'Error',
+        title: 'Oops...',
         text: 'Tolong berikan pesan terlebih dahulu sebelum melakukan aksi!',
       });
       return;
@@ -49,7 +49,7 @@ const ManageSubmissionPage = () => {
 
     const data = {
       id: id,
-      rejectedReason: rejectionReason[id] || '',
+      rejectedReason: adminMessage[id] || '',
     };
 
     try {
@@ -93,7 +93,7 @@ const ManageSubmissionPage = () => {
   };
 
   const handleRejectSubmission = async (id) => {
-    const reason = rejectionReason[id] || '';
+    const reason = adminMessage[id] || '';
     if (!reason.trim()) {
       Swal.fire({
         icon: 'error',
@@ -105,7 +105,7 @@ const ManageSubmissionPage = () => {
 
     const data = {
       id: id,
-      rejectedReason: rejectionReason[id] || '',
+      rejectedReason: adminMessage[id] || '',
     };
 
     try {
@@ -148,8 +148,8 @@ const ManageSubmissionPage = () => {
     }
   };
 
-  const handleReasonChange = (id, value) => {
-    setRejectionReason((prev) => ({ ...prev, [id]: value }));
+  const handleMessageChange = (id, value) => {
+    setAdminMessage((prev) => ({ ...prev, [id]: value }));
   };
 
   const formattedDate = (dateString) => {
@@ -352,9 +352,9 @@ const ManageSubmissionPage = () => {
                                 <textarea
                                   id="message"
                                   rows="4"
-                                  value={rejectionReason[submission._id] || ''}
+                                  value={adminMessage[submission._id] || ''}
                                   onChange={(e) =>
-                                    handleReasonChange(
+                                    handleMessageChange(
                                       submission._id,
                                       e.target.value,
                                     )
