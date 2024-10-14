@@ -27,7 +27,7 @@ import ManageSubmissionPage from './pages/admin/ManageSubmissionPage';
 import ManageWithdrawalPage from './pages/admin/ManageWithdrawal';
 
 // User Pages
-import UserDashboard from './pages/user/UserDashboard';
+import UserDashboardPage from './pages/user/UserDashboardPage';
 
 function App() {
   const location = useLocation();
@@ -95,7 +95,7 @@ function App() {
           path="/user/user-dashboard"
           element={
             <ProtectedRoute allowedRoles={['user', 'admin']}>
-              <UserDashboard />
+              <UserDashboardPage />
             </ProtectedRoute>
           }
         />
