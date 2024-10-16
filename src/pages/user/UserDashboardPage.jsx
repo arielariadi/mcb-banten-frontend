@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import ReactPaginate from 'react-paginate';
-import Swal from 'sweetalert2';
 
 import Navbar from '../../partials/Navbar';
 import ImageModal from '../../components/ImageModal';
@@ -10,7 +9,7 @@ import getUserSubmissionsHistoryService from '../../services/user/getUserSubmiss
 import getUserWithdrawalsHistoryService from '../../services/user/getUserWithdrawalHistory.service';
 
 const UserDashboardPage = () => {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [isModalOpen, isSetModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
 
   const [submissionsHistory, setSubmissionsHistory] = useState([]);
@@ -60,10 +59,6 @@ const UserDashboardPage = () => {
     fetchWithdrawalsHistory();
   }, [currentPage2]);
 
-  // const handleMessageChange = (id, value) => {
-  //   setAdminMessage((prev) => ({ ...prev, [id]: value }));
-  // };
-
   const formattedDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('id-ID', {
@@ -83,13 +78,13 @@ const UserDashboardPage = () => {
     setCurrentPage2(event.selected);
   };
 
-  const openModal = (imageUrl) => {
+  const handleOpenModal = (imageUrl) => {
     setSelectedImage(imageUrl);
-    setModalOpen(true);
+    isSetModalOpen(true);
   };
 
-  const closeModal = () => {
-    setModalOpen(false);
+  const handleCloseModal = () => {
+    isSetModalOpen(false);
     setSelectedImage('');
   };
 
@@ -191,7 +186,7 @@ const UserDashboardPage = () => {
                                     submission.taskScreenshot
                                   }`}
                                   onClick={() =>
-                                    openModal(
+                                    handleOpenModal(
                                       `${config.API_URL}/${submission.taskScreenshot}`,
                                     )
                                   }
@@ -443,8 +438,8 @@ const UserDashboardPage = () => {
         </div>
       </div>
       <ImageModal
-        isOpen={modalOpen}
-        onClose={closeModal}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
         imageUrl={selectedImage}
       />
     </>

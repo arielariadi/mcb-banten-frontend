@@ -28,6 +28,7 @@ import ManageWithdrawalPage from './pages/admin/ManageWithdrawal';
 
 // User Pages
 import UserDashboardPage from './pages/user/UserDashboardPage';
+import TasksListPage from './pages/user/TasksListPage';
 
 function App() {
   const location = useLocation();
@@ -96,6 +97,15 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['user', 'admin']}>
               <UserDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/user/tasks-list"
+          element={
+            <ProtectedRoute allowedRoles={['user', 'admin']}>
+              <TasksListPage />
             </ProtectedRoute>
           }
         />

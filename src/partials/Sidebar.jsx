@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
-import SidebarLinkGroup from './SidebarLinkGroup';
-
 function Sidebar({ sidebarOpen, setSidebarOpen, variant = 'default' }) {
   const location = useLocation();
   const { pathname } = location;

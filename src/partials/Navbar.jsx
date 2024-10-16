@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode'; // Import jwtDecode tanpa curly braces
 import { Menu } from 'lucide-react';
 
-import getAllUsersService from '../services/admin/getAllUsers.service';
+import getAllUsersService from '../services/user/getAllUsers.service';
 
 import LogoSementara from '../assets/images/logo/logo-white.svg';
 
@@ -154,7 +154,7 @@ const Navbar = () => {
                 </span>
                 <button
                   onClick={handleLogout}
-                  className="text-white hover:text-blue-200 transition-colors duration-200"
+                  className="block min-w-5 text-center bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700 transition-colors duration-200"
                 >
                   Logout
                 </button>

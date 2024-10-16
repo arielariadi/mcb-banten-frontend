@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import LineChartUserGrowth from '../../charts/LineChartUserGrowth';
 import { tailwindConfig } from '../../utils/Utils';
-import GetAllUsersService from '../../services/admin/getAllUsers.service';
+import GetAllUsersService from '../../services/user/getAllUsers.service';
 
 function UserGrowthChart() {
   const [chartData, setChartData] = useState(null);
