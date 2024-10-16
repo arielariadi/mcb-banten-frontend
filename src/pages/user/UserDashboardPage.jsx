@@ -52,7 +52,6 @@ const UserDashboardPage = () => {
         );
 
         setWithdrawalsHistory(response.data);
-        console.log(response.data);
         setPageCount2(Math.ceil(response.pagination.totalWithdrawals / limit2));
       } catch (error) {
         console.error('Error fetching withdrawal history:', error);
