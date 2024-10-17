@@ -27,10 +27,14 @@ const ManageSubmissionPage = () => {
     const fetchSubmissions = async () => {
       try {
         const response = await getAllSubmissionsService(currentPage + 1, limit);
-        setSubmissions(response.data);
-        setPageCount(Math.ceil(response.pagination.totalSubmissions / limit));
+        setSubmissions(response.data || []);
+        setPageCount(
+          Math.ceil((response.pagination?.totalSubmissions || 0) / limit),
+        );
       } catch (error) {
         console.error('Error fetching submissions:', error);
+        setSubmissions([]);
+        setPageCount(0);
       }
     };
     fetchSubmissions();
@@ -265,142 +269,150 @@ const ManageSubmissionPage = () => {
                     </thead>
                     {/* Table body */}
                     <tbody className="text-sm divide-y divide-gray-100 dark:divide-gray-700/60">
-                      {submissions.map((submission, index) => (
-                        <tr key={submission._id || index}>
-                          <td className="p-2 whitespace-nowrap">
-                            <div className="text-center">
-                              {index + 1 + currentPage * limit}
-                            </div>
-                          </td>
-                          <td className="p-2 whitespace-nowrap">
-                            <div className="text-left">
-                              {submission.user?.username}
-                            </div>
-                          </td>
-                          <td className="p-2 whitespace-nowrap">
-                            <div className="text-left">
-                              {submission.task?.title}
-                            </div>
-                          </td>
-                          <td className="p-2 whitespace-nowrap">
-                            <div className="text-left">
-                              {submission.task?.description}
-                            </div>
-                          </td>
-                          <td className="p-2 whitespace-nowrap">
-                            <div className="text-left">
-                              <a
-                                href={submission.task?.socialMediaUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                {submission.task?.socialMediaUrl}
-                              </a>
-                            </div>
-                          </td>
-                          <td className="p-2 whitespace-nowrap min-w-40">
-                            <div className="text-left">
-                              <img
-                                src={`${config.API_URL}/${
-                                  submission.taskScreenshot
-                                }`}
-                                onClick={() =>
-                                  openModal(
-                                    `${config.API_URL}/${submission.taskScreenshot}`,
-                                  )
-                                }
-                                alt="image"
-                                className="w-full cursor-pointer transition-transform duration-300 ease-in-out transform hover:scale-105"
-                              />
-                            </div>
-                          </td>
-                          <td className="p-2 whitespace-nowrap">
-                            <div className="text-center">
-                              {submission.description}
-                            </div>
-                          </td>
-                          <td className="p-2 whitespace-nowrap">
-                            <div className="text-center">
-                              {submission.status === 'pending' && (
-                                <div className="text-center">
-                                  <span className="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">
-                                    {submission.status}
-                                  </span>
-                                </div>
-                              )}
-                              {submission.status === 'accepted' && (
-                                <span className="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
-                                  {submission.status}
-                                </span>
-                              )}
-                              {submission.status === 'rejected' && (
-                                <span className="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">
-                                  {submission.status}
-                                </span>
-                              )}
-                            </div>
-                          </td>
-                          <td className="p-2 whitespace-nowrap">
-                            <div className="text-center">
-                              {formattedDate(submission.submittedAt)}
-                            </div>
-                          </td>
-                          <td className="p-2 whitespace-nowrap min-w-96">
-                            {submission.rejectedReason === null ||
-                            !submission.rejectedReason ? (
+                      {submissions.length > 0 ? (
+                        submissions.map((submission, index) => (
+                          <tr key={submission._id || index}>
+                            <td className="p-2 whitespace-nowrap">
                               <div className="text-center">
-                                <textarea
-                                  id="message"
-                                  rows="4"
-                                  value={adminMessage[submission._id] || ''}
-                                  onChange={(e) =>
-                                    handleMessageChange(
-                                      submission._id,
-                                      e.target.value,
+                                {index + 1 + currentPage * limit}
+                              </div>
+                            </td>
+                            <td className="p-2 whitespace-nowrap">
+                              <div className="text-left">
+                                {submission.user?.username}
+                              </div>
+                            </td>
+                            <td className="p-2 whitespace-nowrap">
+                              <div className="text-left">
+                                {submission.task?.title}
+                              </div>
+                            </td>
+                            <td className="p-2 whitespace-nowrap">
+                              <div className="text-left">
+                                {submission.task?.description}
+                              </div>
+                            </td>
+                            <td className="p-2 whitespace-nowrap">
+                              <div className="text-left">
+                                <a
+                                  href={submission.task?.socialMediaUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  {submission.task?.socialMediaUrl}
+                                </a>
+                              </div>
+                            </td>
+                            <td className="p-2 whitespace-nowrap min-w-40">
+                              <div className="text-left">
+                                <img
+                                  src={`${config.API_URL}/${
+                                    submission.taskScreenshot
+                                  }`}
+                                  onClick={() =>
+                                    openModal(
+                                      `${config.API_URL}/${submission.taskScreenshot}`,
                                     )
                                   }
-                                  className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                  placeholder="Wajib diisi jika ditolak maupun diterima!"
-                                ></textarea>
+                                  alt="image"
+                                  className="w-full cursor-pointer transition-transform duration-300 ease-in-out transform hover:scale-105"
+                                />
                               </div>
-                            ) : (
+                            </td>
+                            <td className="p-2 whitespace-nowrap">
                               <div className="text-center">
-                                {submission.rejectedReason}
+                                {submission.description}
                               </div>
-                            )}
-                          </td>
-                          <td className="p-2 whitespace-nowrap">
-                            <div className="text-center">
-                              {submission.validatedAt
-                                ? formattedDate(submission.validatedAt)
-                                : 'Tugas belum divalidasi'}
-                            </div>
-                          </td>
-                          <td className="p-2 whitespace-nowrap">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                handleAcceptSubmission(submission._id)
-                              }
-                              disabled={submission.status !== 'pending'}
-                              className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-                            >
-                              Terima
-                            </button>
+                            </td>
+                            <td className="p-2 whitespace-nowrap">
+                              <div className="text-center">
+                                {submission.status === 'pending' && (
+                                  <div className="text-center">
+                                    <span className="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">
+                                      {submission.status}
+                                    </span>
+                                  </div>
+                                )}
+                                {submission.status === 'accepted' && (
+                                  <span className="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
+                                    {submission.status}
+                                  </span>
+                                )}
+                                {submission.status === 'rejected' && (
+                                  <span className="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">
+                                    {submission.status}
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                            <td className="p-2 whitespace-nowrap">
+                              <div className="text-center">
+                                {formattedDate(submission.submittedAt)}
+                              </div>
+                            </td>
+                            <td className="p-2 whitespace-nowrap min-w-96">
+                              {submission.rejectedReason === null ||
+                              !submission.rejectedReason ? (
+                                <div className="text-center">
+                                  <textarea
+                                    id="message"
+                                    rows="4"
+                                    value={adminMessage[submission._id] || ''}
+                                    onChange={(e) =>
+                                      handleMessageChange(
+                                        submission._id,
+                                        e.target.value,
+                                      )
+                                    }
+                                    className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="Wajib diisi jika ditolak maupun diterima!"
+                                  ></textarea>
+                                </div>
+                              ) : (
+                                <div className="text-center">
+                                  {submission.rejectedReason}
+                                </div>
+                              )}
+                            </td>
+                            <td className="p-2 whitespace-nowrap">
+                              <div className="text-center">
+                                {submission.validatedAt
+                                  ? formattedDate(submission.validatedAt)
+                                  : 'Tugas belum divalidasi'}
+                              </div>
+                            </td>
+                            <td className="p-2 whitespace-nowrap">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleAcceptSubmission(submission._id)
+                                }
+                                disabled={submission.status !== 'pending'}
+                                className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                              >
+                                Terima
+                              </button>
 
-                            <button
-                              type="button"
-                              onClick={() =>
-                                handleRejectSubmission(submission._id)
-                              }
-                              disabled={submission.status !== 'pending'}
-                              className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                            >
-                              Tolak
-                            </button>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleRejectSubmission(submission._id)
+                                }
+                                disabled={submission.status !== 'pending'}
+                                className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                              >
+                                Tolak
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="12" className="p-2 text-center">
+                            Tidak ada submission yang tersedia saat ini.
                           </td>
                         </tr>
-                      ))}
+                      )}
                     </tbody>
                   </table>
                 </div>
