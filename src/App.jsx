@@ -30,6 +30,7 @@ import ManageWithdrawalPage from './pages/admin/ManageWithdrawal';
 import UserDashboardPage from './pages/user/UserDashboardPage';
 import TasksListPage from './pages/user/TasksListPage';
 import SubmitTaskPage from './pages/user/SubmitTaskPage';
+import RequestWithdrawalPage from './pages/user/RequestWithdrawalPage';
 
 function App() {
   const location = useLocation();
@@ -116,6 +117,15 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['user', 'admin']}>
               <SubmitTaskPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/user/request-withdrawal"
+          element={
+            <ProtectedRoute allowedRoles={['user', 'admin']}>
+              <RequestWithdrawalPage />
             </ProtectedRoute>
           }
         />

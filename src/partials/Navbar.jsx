@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode'; // Import jwtDecode tanpa curly braces
+import { jwtDecode } from 'jwt-decode';
 import { Menu } from 'lucide-react';
 
 import getAllUsersService from '../services/user/getAllUsers.service';
@@ -85,7 +85,7 @@ const Navbar = () => {
     { label: 'Dashboard', href: '/user/user-dashboard' },
     { label: 'Kumpulan Tugas', href: '/user/tasks-list' },
     { label: 'Submit Tugas', href: '/user/submit-task' },
-    { label: 'Penarikan Reward', href: '/user/withdrawal' },
+    { label: 'Penarikan Reward', href: '/user/request-withdrawal' },
     { label: 'Profil', href: '/user/user-profile' },
   ];
 

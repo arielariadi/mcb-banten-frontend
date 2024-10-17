@@ -20,7 +20,6 @@ const SubmitTaskPage = () => {
       try {
         const response = await getAllTasksService();
         setTasks(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error('Error fetching tasks:', error);
       }

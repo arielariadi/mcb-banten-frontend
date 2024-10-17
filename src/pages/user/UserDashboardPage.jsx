@@ -135,7 +135,7 @@ const UserDashboardPage = () => {
                           </th>
                           <th className="p-2 whitespace-nowrap">
                             <div className="font-semibold text-center">
-                              Deskripsi
+                              Penjelasan Saya
                             </div>
                           </th>
                           <th className="p-2 whitespace-nowrap">
@@ -297,12 +297,12 @@ const UserDashboardPage = () => {
                           </th>
                           <th className="p-2 whitespace-nowrap">
                             <div className="font-semibold text-center">
-                              Metode Pembayaran
+                              Metode Penarikan
                             </div>
                           </th>
                           <th className="p-2 whitespace-nowrap">
                             <div className="font-semibold text-center">
-                              Nomor Metode Pembayaran
+                              Nomor Metode Penarikan
                             </div>
                           </th>
                           <th className="p-2 whitespace-nowrap">
@@ -353,7 +353,7 @@ const UserDashboardPage = () => {
                             </td>
                             <td className="p-2 whitespace-nowrap">
                               <div className="text-center">
-                                {withdrawal.amount}
+                                {withdrawal.amount.toLocaleString()}
                               </div>
                             </td>
 
@@ -366,7 +366,7 @@ const UserDashboardPage = () => {
                               {withdrawal.validatedAt === null ||
                               !withdrawal.validatedAt ? (
                                 <div className="text-center">
-                                  Tugas belum divalidasi!
+                                  Request penarikan belum divalidasi!
                                 </div>
                               ) : (
                                 <div className="text-center">
