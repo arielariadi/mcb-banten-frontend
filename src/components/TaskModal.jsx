@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import config from '../services/api-config/config';
 
 const TaskModal = ({ task, isOpen, onClose }) => {

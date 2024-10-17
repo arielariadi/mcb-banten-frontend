@@ -84,7 +84,7 @@ const Navbar = () => {
   const menuItemsLoggedIn = [
     { label: 'Dashboard', href: '/user/user-dashboard' },
     { label: 'Kumpulan Tugas', href: '/user/tasks-list' },
-    { label: 'Submit Tugas', href: '/user/tasks-submit' },
+    { label: 'Submit Tugas', href: '/user/submit-task' },
     { label: 'Penarikan Reward', href: '/user/withdrawal' },
     { label: 'Profil', href: '/user/user-profile' },
   ];

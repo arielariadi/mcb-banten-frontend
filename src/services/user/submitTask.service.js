@@ -1,10 +1,11 @@
 import axios from 'axios';
 import config from '../api-config/config';
 
-const getUserSubmissionsHistoryService = async (page, limit) => {
+const submitTaskService = async (data) => {
   try {
-    const response = await axios.get(
-      `${config.API_URL}/v1/user/submissions-history?page=${page}&limit=${limit}`,
+    const response = await axios.post(
+      `${config.API_URL}/v1/user/submit-task`,
+      data,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('authToken')}`,
@@ -21,4 +22,4 @@ const getUserSubmissionsHistoryService = async (page, limit) => {
   }
 };
 
-export default getUserSubmissionsHistoryService;
+export default submitTaskService;

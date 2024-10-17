@@ -29,6 +29,7 @@ import ManageWithdrawalPage from './pages/admin/ManageWithdrawal';
 // User Pages
 import UserDashboardPage from './pages/user/UserDashboardPage';
 import TasksListPage from './pages/user/TasksListPage';
+import SubmitTaskPage from './pages/user/SubmitTaskPage';
 
 function App() {
   const location = useLocation();
@@ -106,6 +107,15 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['user', 'admin']}>
               <TasksListPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/user/submit-task"
+          element={
+            <ProtectedRoute allowedRoles={['user', 'admin']}>
+              <SubmitTaskPage />
             </ProtectedRoute>
           }
         />

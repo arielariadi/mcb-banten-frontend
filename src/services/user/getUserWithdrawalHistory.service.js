@@ -13,7 +13,11 @@ const getUserWithdrawalsHistoryService = async (page, limit) => {
     );
     return response.data;
   } catch (error) {
-    throw new Error(error.response.data.message);
+    if (error.response && error.response.data && error.response.data.message) {
+      throw new Error(error.response.data.message);
+    } else {
+      throw error;
+    }
   }
 };
 

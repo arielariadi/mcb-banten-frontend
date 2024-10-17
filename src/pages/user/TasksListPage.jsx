@@ -4,7 +4,6 @@ import ReactPaginate from 'react-paginate';
 import Navbar from '../../partials/Navbar';
 import TaskModal from '../../components/TaskModal';
 
-import config from '../../services/api-config/config';
 import getAllTasksService from '../../services/general/getAllTasks.service';
 
 const TasksListPage = () => {
