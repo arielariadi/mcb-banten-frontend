@@ -14,6 +14,8 @@ const RequestWithdrawalPage = () => {
   const [userId, setUserId] = useState(null);
   const [userTotalReward, setUserTotalReward] = useState(0);
 
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   const withdrawalMethodRef = useRef();
   const withdrawalMethodNumberRef = useRef();
   const amountRef = useRef();
@@ -122,10 +124,6 @@ const RequestWithdrawalPage = () => {
         event.target.withdrawalMethod.value = '';
         event.target.withdrawalMethodNumber.value = '';
         event.target.amount.value = '';
-
-        // Update user data after successful withdrawal
-        // const updatedUserData = await getAllUsersService();
-        // setUserData(updatedUserData);
       }
     } catch (error) {
       console.error('Error requesting withdrawal:', error);
@@ -138,6 +136,11 @@ const RequestWithdrawalPage = () => {
       });
     }
   };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
   return (
     <>
       <div className="flex h-screen overflow-hidden">
@@ -151,7 +154,62 @@ const RequestWithdrawalPage = () => {
                 </h1>
               </div>
 
-              <div className="flex flex-col lg:flex-row lg:mt-5 col-span-full p-5 sm:col-span-6 xl:col-span-4 bg-white dark:bg-gray-800 shadow-sm rounded-xl">
+              <div className="flex flex-col items-center mt-5">
+                <div className="relative inline-block">
+                  <button
+                    id="dropdownHoverButton"
+                    onClick={toggleDropdown}
+                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    type="button"
+                  >
+                    Catatan{' '}
+                    <svg
+                      className="w-2.5 h-2.5 ms-3"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 10 6"
+                    >
+                      <path
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="m1 1 4 4 4-4"
+                      />
+                    </svg>
+                  </button>
+                </div>
+
+                {/* Dropdown menu */}
+                {isDropdownOpen && (
+                  <div
+                    id="dropdownHover"
+                    className="bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-96 lg:w-1/2 dark:bg-gray-700 mt-2"
+                  >
+                    <ul className="py-4 px-6 text-sm lg:text-lg font-bold text-gray-700">
+                      <li className="py-2">
+                        1. Anda harus memiliki saldo minimal 250.000 jika ingin
+                        melakukan request penarikan
+                      </li>
+                      <li className="py-2">
+                        2. Jumlah penarikan tidak bisa melebihi jumlah saldo
+                        saat ini
+                      </li>
+                      <li className="py-2">
+                        3. Masukkan nomor metode penarikan yang valid sesuai
+                        dengan pilihan metode penarikan
+                      </li>
+                      <li className="py-2">
+                        4. Tuliskan jumlah nominal penarikan tanpa tanda titik.
+                        Contoh : 100000
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex flex-col mt-5 lg:flex-row lg:mt-5 col-span-full p-5 sm:col-span-6 xl:col-span-4 bg-white dark:bg-gray-800 shadow-sm rounded-xl">
                 <form
                   className="w-full lg:mr-4 mx-auto"
                   onSubmit={handleSubmit}
