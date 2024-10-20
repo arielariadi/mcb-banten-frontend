@@ -1,46 +1,64 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-
 import loginService from '../../services/auth/login.service';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loginFailed, setLoginFailed] = useState('');
-  const [authToken, setAuthToken] = useState(null);
-  const [userRole, setUserRole] = useState(null);
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
+  const validateEmail = (email) => {
+    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return re.test(String(email).toLowerCase());
+  };
 
   const handleLogin = async (event) => {
     event.preventDefault();
+    setError('');
+    setIsLoading(true);
+
+    if (!validateEmail(email)) {
+      setError('Please enter a valid email address.');
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const data = { email, password };
+      const response = await loginService({ email, password });
 
-      const response = await loginService(data);
-
-      // Access token directly from response
-      const token = response.token;
-
-      if (!token) {
-        throw new Error('Token not found in response');
+      if (!response || !response.token) {
+        throw new Error('Invalid response from server');
       }
 
-      setAuthToken(token);
-      const decodedToken = jwtDecode(token);
+      const decodedToken = jwtDecode(response.token);
 
-      setUserRole(decodedToken.role);
+      if (!decodedToken || !decodedToken.role) {
+        throw new Error('Invalid token received');
+      }
 
-      // Store token in localStorage
-      localStorage.setItem('authToken', token);
+      localStorage.setItem('authToken', response.token);
 
       if (decodedToken.role === 'admin') {
         navigate('/admin/admin-dashboard');
       } else if (decodedToken.role === 'user') {
         navigate('/user/user-dashboard');
+      } else {
+        throw new Error('Unknown user role');
       }
     } catch (error) {
-      setLoginFailed(error.message || 'Login failed');
+      console.error('Login error:', error);
+      if (error.message === 'User does not exist!') {
+        setError('No account found with this email address.');
+      } else if (error.message === 'Incorrect password!') {
+        setError('Incorrect email or password. Please try again.');
+      } else {
+        setError('Login failed. Please check your email and password.');
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -49,7 +67,10 @@ const Login = () => {
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
         <div className="flex items-center mb-6 justify-between">
           <a href="/" className="mr-2">
-            <button className="text-gray-700 hover:text-gray-900 focus:outline-none">
+            <button
+              className="text-gray-700 hover:text-gray-900 focus:outline-none"
+              aria-label="Go back"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -68,58 +89,57 @@ const Login = () => {
           </a>
           <h2 className="text-2xl font-bold text-center flex-grow">Login</h2>
         </div>
+        {error && (
+          <div
+            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
+            role="alert"
+          >
+            <span className="block sm:inline">{error}</span>
+          </div>
+        )}
         <form onSubmit={handleLogin} className="space-y-4">
-          {/* Email */}
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="email" className="block text-sm font-medium">
               Email
             </label>
             <input
               type="email"
               name="email"
               id="email"
-              autoComplete="off"
+              autoComplete="email"
               value={email}
-              onChange={(event) => setEmail(event.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               required
-              className="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              className="mt-1 p-2 w-full border rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
-
-          {/* Password */}
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="password" className="block text-sm font-medium">
               Password
             </label>
             <input
               type="password"
               name="password"
               id="password"
+              autoComplete="current-password"
               value={password}
-              onChange={(event) => setPassword(event.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               required
-              className="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              className="mt-1 p-2 w-full border rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
-
-          {/* Submit Button */}
           <button
             type="submit"
-            style={{ backgroundColor: '#4F46E5' }}
-            className="w-full text-white p-2 rounded-lg hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-indigo-500"
+            disabled={isLoading}
+            className={`w-full text-white p-2 rounded-lg focus:ring-4 focus:outline-none focus:ring-indigo-500 ${
+              isLoading
+                ? 'bg-indigo-300 cursor-not-allowed'
+                : 'bg-indigo-600 hover:bg-indigo-700'
+            }`}
           >
-            Login
+            {isLoading ? 'Logging in...' : 'Login'}
           </button>
-          {loginFailed && <p>{loginFailed}</p>}
         </form>
-
-        {/* Link to Register */}
         <p className="mt-4 text-sm text-center text-gray-600">
           Belum punya akun?{' '}
           <a href="/auth/register" className="text-indigo-600 hover:underline">

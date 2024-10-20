@@ -6,7 +6,7 @@ import Header from '../../partials/Header';
 import UserGrowthChart from '../../partials/dashboard/UserGrowthChart';
 
 import getAllTasksService from '../../services/general/getAllTasks.service';
-import getAllUsersService from '../../services/admin/getAllUsers.service';
+import getAllUsersService from '../../services/user/getAllUsers.service';
 
 const AdminDashboardPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);

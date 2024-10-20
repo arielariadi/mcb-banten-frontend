@@ -256,121 +256,129 @@ const ManageWithdrawalPage = () => {
 
                     {/* Table body */}
                     <tbody className="text-sm divide-y divide-gray-100 dark:divide-gray-700/60">
-                      {withdrawalsData.map((withdrawal, index) => (
-                        <tr key={withdrawal._id || index}>
-                          <td className="p-2 whitespace-nowrap">
-                            <div className="text-center">
-                              {index + 1 + currentPage * limit}
-                            </div>
-                          </td>
-                          <td className="p-2 whitespace-nowrap">
-                            <div className="text-center">
-                              {withdrawal.user?.username}
-                            </div>
-                          </td>
-                          <td className="p-2 whitespace-nowrap">
-                            <div className="text-center">
-                              {withdrawal.user?.alamat}
-                            </div>
-                          </td>
-                          <td className="p-2 whitespace-nowrap">
-                            <div className="text-center">
-                              {withdrawal.withdrawalMethod}
-                            </div>
-                          </td>
-                          <td className="p-2 whitespace-nowrap">
-                            <div className="text-center">
-                              {withdrawal.withdrawalMethodNumber}
-                            </div>
-                          </td>
-                          <td className="p-2 whitespace-nowrap">
-                            <div className="text-center">
-                              {formattedNumber(withdrawal.amount)}
-                            </div>
-                          </td>
+                      {withdrawalsData.length > 0 ? (
+                        withdrawalsData.map((withdrawal, index) => (
+                          <tr key={withdrawal._id || index}>
+                            <td className="p-2 whitespace-nowrap">
+                              <div className="text-center">
+                                {index + 1 + currentPage * limit}
+                              </div>
+                            </td>
+                            <td className="p-2 whitespace-nowrap">
+                              <div className="text-center">
+                                {withdrawal.user?.username}
+                              </div>
+                            </td>
+                            <td className="p-2 whitespace-nowrap">
+                              <div className="text-center">
+                                {withdrawal.user?.alamat}
+                              </div>
+                            </td>
+                            <td className="p-2 whitespace-nowrap">
+                              <div className="text-center">
+                                {withdrawal.withdrawalMethod}
+                              </div>
+                            </td>
+                            <td className="p-2 whitespace-nowrap">
+                              <div className="text-center">
+                                {withdrawal.withdrawalMethodNumber}
+                              </div>
+                            </td>
+                            <td className="p-2 whitespace-nowrap">
+                              <div className="text-center">
+                                {formattedNumber(withdrawal.amount)}
+                              </div>
+                            </td>
 
-                          <td className="p-2 whitespace-nowrap">
-                            <div className="text-center">
-                              {withdrawal.status === 'pending' && (
-                                <div className="text-center">
-                                  <span className="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">
+                            <td className="p-2 whitespace-nowrap">
+                              <div className="text-center">
+                                {withdrawal.status === 'pending' && (
+                                  <div className="text-center">
+                                    <span className="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">
+                                      {withdrawal.status}
+                                    </span>
+                                  </div>
+                                )}
+                                {withdrawal.status === 'accepted' && (
+                                  <span className="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
                                     {withdrawal.status}
                                   </span>
+                                )}
+                                {withdrawal.status === 'rejected' && (
+                                  <span className="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">
+                                    {withdrawal.status}
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                            <td className="p-2 whitespace-nowrap">
+                              <div className="text-center">
+                                {formattedDate(withdrawal.requestedAt)}
+                              </div>
+                            </td>
+                            <td className="p-2 whitespace-nowrap min-w-96">
+                              {withdrawal.rejectedReason === null ||
+                              !withdrawal.rejectedReason ? (
+                                <div className="text-center">
+                                  <textarea
+                                    id="message"
+                                    rows="4"
+                                    value={adminMessage[withdrawal._id] || ''}
+                                    onChange={(e) =>
+                                      handleMessageChange(
+                                        withdrawal._id,
+                                        e.target.value,
+                                      )
+                                    }
+                                    className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="Wajib diisi jika ditolak maupun diterima!"
+                                  ></textarea>
+                                </div>
+                              ) : (
+                                <div className="text-center">
+                                  {withdrawal.rejectedReason}
                                 </div>
                               )}
-                              {withdrawal.status === 'accepted' && (
-                                <span className="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
-                                  {withdrawal.status}
-                                </span>
-                              )}
-                              {withdrawal.status === 'rejected' && (
-                                <span className="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">
-                                  {withdrawal.status}
-                                </span>
-                              )}
-                            </div>
-                          </td>
-                          <td className="p-2 whitespace-nowrap">
-                            <div className="text-center">
-                              {formattedDate(withdrawal.requestedAt)}
-                            </div>
-                          </td>
-                          <td className="p-2 whitespace-nowrap min-w-96">
-                            {withdrawal.rejectedReason === null ||
-                            !withdrawal.rejectedReason ? (
+                            </td>
+                            <td className="p-2 whitespace-nowrap">
                               <div className="text-center">
-                                <textarea
-                                  id="message"
-                                  rows="4"
-                                  value={adminMessage[withdrawal._id] || ''}
-                                  onChange={(e) =>
-                                    handleMessageChange(
-                                      withdrawal._id,
-                                      e.target.value,
-                                    )
-                                  }
-                                  className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                  placeholder="Wajib diisi jika ditolak maupun diterima!"
-                                ></textarea>
+                                {withdrawal.validatedAt
+                                  ? formattedDate(withdrawal.validatedAt)
+                                  : 'Request penarikan belum divalidasi'}
                               </div>
-                            ) : (
-                              <div className="text-center">
-                                {withdrawal.rejectedReason}
-                              </div>
-                            )}
-                          </td>
-                          <td className="p-2 whitespace-nowrap">
-                            <div className="text-center">
-                              {withdrawal.validatedAt
-                                ? formattedDate(withdrawal.validatedAt)
-                                : 'Request penarikan belum divalidasi'}
-                            </div>
-                          </td>
-                          <td className="p-2 whitespace-nowrap">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                handleAcceptWithdrawal(withdrawal._id)
-                              }
-                              disabled={withdrawal.status !== 'pending'}
-                              className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-                            >
-                              Terima
-                            </button>
+                            </td>
+                            <td className="p-2 whitespace-nowrap">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleAcceptWithdrawal(withdrawal._id)
+                                }
+                                disabled={withdrawal.status !== 'pending'}
+                                className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                              >
+                                Terima
+                              </button>
 
-                            <button
-                              type="button"
-                              onClick={() =>
-                                handleRejectWithdrawal(withdrawal._id)
-                              }
-                              disabled={withdrawal.status !== 'pending'}
-                              className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                            >
-                              Tolak
-                            </button>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleRejectWithdrawal(withdrawal._id)
+                                }
+                                disabled={withdrawal.status !== 'pending'}
+                                className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                              >
+                                Tolak
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="12" className="p-2 text-center">
+                            Tidak ada data penarikan
                           </td>
                         </tr>
-                      ))}
+                      )}
                     </tbody>
                   </table>
                 </div>

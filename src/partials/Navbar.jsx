@@ -3,6 +3,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { Menu } from 'lucide-react';
 
+import getAllUsersService from '../services/user/getAllUsers.service';
+
 import LogoSementara from '../assets/images/logo/logo-white.svg';
 
 const Navbar = () => {
@@ -10,6 +12,10 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const [userId, setUserId] = useState(null); // Untuk menyimpan userId yang login
+  const [userTotalReward, setUserTotalReward] = useState(0); // Untuk menyimpan total reward
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -20,6 +26,7 @@ const Navbar = () => {
         const decodedToken = jwtDecode(token);
         setIsLoggedIn(true);
         setUserRole(decodedToken.role);
+        setUserId(decodedToken.id); // Ambil userId dari token yang di-decode
       } catch (error) {
         console.error('Invalid token', error);
         setIsLoggedIn(false);
@@ -37,6 +44,25 @@ const Navbar = () => {
       window.removeEventListener('scroll', changeBackgroundColor);
     };
   }, []);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await getAllUsersService();
+        // Cari user yang sedang login berdasarkan userId
+
+        const loggedInUser = response.data.find((user) => user._id === userId);
+        if (loggedInUser) {
+          setUserTotalReward(loggedInUser.totalReward); // Set total reward untuk user yang login
+        }
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+    if (userId) {
+      fetchUsers(); // Hanya panggil API jika userId ada (berarti user sudah login)
+    }
+  }, [userId]);
 
   const isUserPage = location.pathname.startsWith('/user');
 
@@ -58,10 +84,18 @@ const Navbar = () => {
   const menuItemsLoggedIn = [
     { label: 'Dashboard', href: '/user/user-dashboard' },
     { label: 'Kumpulan Tugas', href: '/user/tasks-list' },
-    { label: 'Submit Tugas', href: '/user/tasks-submit' },
-    { label: 'Penarikan Reward', href: '/user/withdrawal' },
+    { label: 'Submit Tugas', href: '/user/submit-task' },
+    { label: 'Penarikan Reward', href: '/user/request-withdrawal' },
     { label: 'Profil', href: '/user/user-profile' },
   ];
+
+  const formattedCurrency = (value) => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0, // Menghilangkan desimal jika tidak diinginkan
+    }).format(value || 0);
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
@@ -114,12 +148,17 @@ const Navbar = () => {
               </div>
             )}
             {isLoggedIn && (
-              <button
-                onClick={handleLogout}
-                className="hidden lg:block text-white hover:text-blue-200 transition-colors duration-200"
-              >
-                Logout
-              </button>
+              <div className="hidden lg:flex items-center space-x-4">
+                <span className="text-white font-bold">
+                  Saldo: {formattedCurrency(userTotalReward)}
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="block min-w-5 text-center bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700 transition-colors duration-200"
+                >
+                  Logout
+                </button>
+              </div>
             )}
             <button
               className="lg:hidden text-white ml-4"
@@ -130,6 +169,7 @@ const Navbar = () => {
           </div>
         </div>
       </div>
+
       {isMenuOpen && (
         <div className="lg:hidden bg-white">
           <nav className="container mx-auto px-4 py-4">
@@ -146,6 +186,7 @@ const Navbar = () => {
                 </li>
               ))}
             </ul>
+
             {!isLoggedIn && (
               <div className="mt-6 space-y-4">
                 <Link
@@ -165,15 +206,20 @@ const Navbar = () => {
               </div>
             )}
             {isLoggedIn && (
-              <button
-                onClick={() => {
-                  handleLogout();
-                  setIsMenuOpen(false);
-                }}
-                className="mt-6 block w-full text-center bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700 transition-colors duration-200"
-              >
-                Logout
-              </button>
+              <>
+                <span className="block text-center text-blue-700 font-bold text-2xl">
+                  Saldo: {formattedCurrency(userTotalReward)}
+                </span>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setIsMenuOpen(false);
+                  }}
+                  className="mt-6 block w-full text-center bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700 transition-colors duration-200"
+                >
+                  Logout
+                </button>
+              </>
             )}
           </nav>
         </div>

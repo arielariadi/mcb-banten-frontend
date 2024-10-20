@@ -27,7 +27,11 @@ import ManageSubmissionPage from './pages/admin/ManageSubmissionPage';
 import ManageWithdrawalPage from './pages/admin/ManageWithdrawal';
 
 // User Pages
-import UserDashboard from './pages/user/UserDashboard';
+import UserDashboardPage from './pages/user/UserDashboardPage';
+import TasksListPage from './pages/user/TasksListPage';
+import SubmitTaskPage from './pages/user/SubmitTaskPage';
+import RequestWithdrawalPage from './pages/user/RequestWithdrawalPage';
+import UserProfilePage from './pages/user/UserProfilePage';
 
 function App() {
   const location = useLocation();
@@ -95,7 +99,43 @@ function App() {
           path="/user/user-dashboard"
           element={
             <ProtectedRoute allowedRoles={['user', 'admin']}>
-              <UserDashboard />
+              <UserDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/user/tasks-list"
+          element={
+            <ProtectedRoute allowedRoles={['user', 'admin']}>
+              <TasksListPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/user/submit-task"
+          element={
+            <ProtectedRoute allowedRoles={['user', 'admin']}>
+              <SubmitTaskPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/user/request-withdrawal"
+          element={
+            <ProtectedRoute allowedRoles={['user', 'admin']}>
+              <RequestWithdrawalPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/user/user-profile"
+          element={
+            <ProtectedRoute allowedRoles={['user', 'admin']}>
+              <UserProfilePage />
             </ProtectedRoute>
           }
         />
